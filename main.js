@@ -23,7 +23,7 @@ const buscarInfo = async  (result) => {
     const id2 = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')} ${fecha.getHours().toString().padStart(2, '0')}:${fecha.getMinutes().toString().padStart(2, '0')}:${fecha.getSeconds().toString().padStart(2, '0')}`;
     let ficho = parseInt(result, 10);
     const id=ficho;
-    const response = await fetch("http://localhost:4000/api/kid/scanner/"+id+"/"+id2);
+    const response = await fetch("https://localhost:4000/api/kid/scanner/"+id+"/"+id2);
     const registro = await response.json();
     const Dk=registro[0].id;
     registro.forEach((reg) => {
@@ -34,7 +34,8 @@ const buscarInfo = async  (result) => {
         <p>Edad: ${reg.edad} <br></p>
         <p>Informacion del acudiente #1: <br> ${reg.nombrep1} <br> ${reg.celular1} <br></p>
         <p>Informacion del acudiente #2: <br> ${reg.nombrep2} <br> ${reg.celular2} <br></p>
-        <p>Fecha y hora del registro: ${reg.fechacreacion}</p><br>
+        <p>Fecha y hora del registro: ${reg.fechacreacion} <br></p>
+        <button id="btnRecargar" class="btn btn-primary" onclick="reload()">Escanear de nuevo</button>
         `;
     });
     await actulizarStatus(Dk);  
@@ -45,7 +46,7 @@ const actulizarStatus = async  (Dk) => {
     const datos = {
         estado: 'LEIDO'
     };
-    const response =  fetch("http://localhost:4000/api/kid/scanner/actu/"+id,{
+    const response =  fetch("https://localhost:4000/api/kid/scanner/actu/"+id,{
         method:'PUT',
         headers:{'Content-Type': 'application/json'},
         body:JSON.stringify(datos)
@@ -63,6 +64,14 @@ const actulizarStatus = async  (Dk) => {
 
 function error(err) {
     if (err != 'QR code parse error, error = D: No MultiFormat Readers were able to detect the code.') {
-        console.error(err); 
+        alert('Se esta presentando el siguiente error: ' + err); 
     }
-}
+};
+
+var btnRecargar = document.getElementById("btnRecargar");
+
+// Agregar un escuchador de eventos para esperar a que el botón sea clicado
+function reload() {
+// Recargar la página actual
+    location.reload();
+};
