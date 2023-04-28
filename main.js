@@ -4,7 +4,7 @@ const scanner = new Html5QrcodeScanner('reader', {
         width: 250,
         height: 250,
     },  // Defino dimenciones del qrbox 
-    fps: 60, // Frames 
+    fps: 30, // Frames 
 });
 
 
@@ -23,7 +23,10 @@ const buscarInfo = async  (result) => {
     const id2 = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')} ${fecha.getHours().toString().padStart(2, '0')}:${fecha.getMinutes().toString().padStart(2, '0')}:${fecha.getSeconds().toString().padStart(2, '0')}`;
     let ficho = parseInt(result, 10);
     const id=ficho;
-    const response = await fetch("https://localhost:4000/api/kid/scanner/"+id+"/"+id2);
+    //console.log(id)
+    //console.log(id2)
+    const response = await fetch("https://rocakids.com.co:4014/api/kid/scanner/"+id+"/"+id2); // PRODUCCION
+    //const response = await fetch("https://localhost:4014/api/kid/scanner/"+id+"/"+id2); // PRUEBAS
     const registro = await response.json();
     const Dk=registro[0].id;
     registro.forEach((reg) => {
@@ -46,7 +49,8 @@ const actulizarStatus = async  (Dk) => {
     const datos = {
         estado: 'LEIDO'
     };
-    const response =  fetch("https://localhost:4000/api/kid/scanner/actu/"+id,{
+    //const response =  fetch("https://localhost:4014/api/kid/scanner/actu/"+id,{ // PRUEBAS
+    const response =  fetch("https://rocakids.com.co:4014/api/kid/scanner/actu/"+id,{
         method:'PUT',
         headers:{'Content-Type': 'application/json'},
         body:JSON.stringify(datos)
