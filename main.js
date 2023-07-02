@@ -31,6 +31,7 @@ const buscarInfo = async  (result) => {
     const Dk=registro[0].id;
     registro.forEach((reg) => {
         document.getElementById('info').innerHTML = `
+        <input id="idReg" style="display:none;">
         <h2>Escaneo Exitoso!</h2>
         <p>El numero del ficho es: ${reg.ficho} <br></p>
         <p>El nombre del niño es: ${reg.nombres} <br></p>
@@ -39,8 +40,11 @@ const buscarInfo = async  (result) => {
         <p>Informacion del acudiente #2: <br> ${reg.nombrep2} <br> ${reg.celular2} <br></p>
         <p>Fecha y hora del registro: ${reg.fechacreacion} <br></p>
         <button id="btnRecargar" class="btn btn-primary" onclick="reload()">Escanear de nuevo</button>
+        <button id="btnEstado" class="btn btn-warning" onclick="actulizarStatusACTIVO()">ACTIVAR CODIGO</button>
         `;
     });
+    const IdRegInput = document.querySelector('#idReg');
+    IdRegInput.value = Dk;
     await actulizarStatus(Dk);  
 }
 
@@ -66,9 +70,32 @@ const actulizarStatus = async  (Dk) => {
 };
 
 
+const actulizarStatusACTIVO = async  () => {
+
+    const id = document.getElementById("idReg").value;
+    console.log("Dk ",id)
+    const datos = {
+        estado: 'ACTIVO'
+    };
+    //const response =  fetch("https://localhost:4014/api/kid/scanner/actu/"+id,{ // PRUEBAS
+    const response =  fetch("https://rocakids.com.co:4014/api/kid/scanner/actu/"+id,{
+        method:'PUT',
+        headers:{'Content-Type': 'application/json'},
+        body:JSON.stringify(datos)
+    }).then(response => response.json())
+    .then(data => {
+    if (data.status == 'ok') {
+        alert('La solicitud se realizó con éxito. Respuesta: ' + data.message);
+    } else {
+        alert('Se produjo un error en la solicitud. Mensaje de error: ' + data.error);
+    }
+    })
+    .catch(error => console.error('Error:', error));         
+};
+
 function error(err) {
     if (err != 'QR code parse error, error = D: No MultiFormat Readers were able to detect the code.') {
-        alert('Se esta presentando el siguiente error: ' + err); 
+       // alert('Se esta presentando el siguiente error: ' + err); 
     }
 };
 
